@@ -1,6 +1,6 @@
 {
-  "name": "@cvkline/use-media-set-example",
-  "homepage": "https://cvkline.github.io/@cvkline/use-media-set",
+  "name": "use-media-set-example",
+  "homepage": "https://cvkline.github.io/use-media-set",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
@@ -9,7 +9,7 @@
     "react": "file:../node_modules/react",
     "react-dom": "^16.9.0",
     "react-scripts": "^3.0.1",
-    "@cvkline/use-media-set": "file:.."
+    "use-media-set": "file:.."
   },
   "scripts": {
     "start": "react-scripts start",

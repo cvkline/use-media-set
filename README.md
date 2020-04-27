@@ -1,13 +1,13 @@
-# @cvkline/use-media-set
+# use-media-set
 
 > Custom hook to make components responsive to media query changes
 
-[![NPM](https://img.shields.io/npm/v/@cvkline/use-media-set.svg)](https://www.npmjs.com/package/@cvkline/use-media-set) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/use-media-set.svg)](https://www.npmjs.com/package/use-media-set) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
 ```bash
-npm install --save @cvkline/use-media-set
+npm install --save use-media-set
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ npm install --save @cvkline/use-media-set
 ```jsx
 import React, { Component } from 'react'
 
-import { useMyHook } from '@cvkline/use-media-set'
+import { useMyHook } from 'use-media-set'
 
 const Example = () => {
   const example = useMyHook()

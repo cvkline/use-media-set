@@ -1,29 +1,28 @@
-import { useMyHook } from './'
-import { renderHook, act } from "@testing-library/react-hooks";
+import { useMediaSet } from './';
+import { renderHook } from '@testing-library/react-hooks';
 
-// mock timer using jest
-jest.useFakeTimers();
+describe('useMediaSet', () => {
+  let mockedMatches = {};
 
-describe('useMyHook', () => {
-  it('updates every second', () => {
-    const { result } = renderHook(() => useMyHook());
-
-    expect(result.current).toBe(0);
-
-    // Fast-forward 1sec
-    act(() => {
-      jest.advanceTimersByTime(1000);
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      value: jest.fn().mockImplementation(query => ({
+        matches: mockedMatches.hasOwnProperty(query),
+        media: query,
+        onchange: null,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+      writable: true,
     });
+  });
 
-    // Check after total 1 sec
-    expect(result.current).toBe(1);
-
-    // Fast-forward 1 more sec
-    act(() => {
-      jest.advanceTimersByTime(1000);
-    });
-
-    // Check after total 2 sec
-    expect(result.current).toBe(2);
-  })
-})
+  it('gets the initial state right', () => {
+    // "small" according to the default breakpoints
+    mockedMatches['(max-width: 592px)'] = true;
+    const { result } = renderHook(() => useMediaSet());
+    expect(result.current.size).toBe(1);
+    expect(result.current.has('small')).toBeTruthy();
+  });
+});
