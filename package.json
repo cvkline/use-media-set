@@ -19,13 +19,14 @@
     "start": "rollup -c -w",
     "prepare": "npm run build",
     "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "deploy": "gh-pages -d example/build",
+    "postpublish": "git push --tags"
   },
   "dependencies": {
     "lodash": "^4.10"
   },
   "peerDependencies": {
-    "react": "^16.9.0"
+    "react": "^16.8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -73,5 +74,8 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-url": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
