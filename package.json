@@ -1,6 +1,6 @@
 {
   "name": "use-media-set",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Custom hook to make components responsive to media query changes",
   "author": "cvkline",
   "license": "MIT",
