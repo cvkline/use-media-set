@@ -12,6 +12,12 @@ const DEFAULT_BREAKPOINTS = {
 };
 
 export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
+  // If matchMedia is not present (as in some test environments),
+  // just return a constant empty set. This early return is technically
+  // a violation of the Rules of Hooks but since the early return will
+  // either always happen or never happen, the behavior is safe.
+  if (!window.matchMedia) return new Set();
+
   const initialRender = useRef(true);
   const queryLists = new Map();
 
