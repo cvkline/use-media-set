@@ -128,7 +128,6 @@ describe('useMediaSet', () => {
     const { unmount } = renderHook(() => useMediaSet());
     unmount();
     for (const m of mediaMatches.values()) {
-      // expect(m.removeEventListener.mock.calls.length).toBe(1);
       expect(m.removeEventListener).toHaveBeenCalledTimes(1);
     }
   });
