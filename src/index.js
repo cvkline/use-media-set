@@ -26,7 +26,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
   // returns a Set of the names of queries in the list that currently match
   function matchingBreakpoints() {
     const result = new Set();
-    for (let [k, v] of queryLists) {
+    for (const [k, v] of queryLists) {
       if (v.matches) result.add(k);
     }
     return result;
@@ -61,7 +61,6 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
       queryLists.forEach(v => v.addEventListener('change', onChange));
 
       return cleanup;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [JSON.stringify(breakpoints)]
   );

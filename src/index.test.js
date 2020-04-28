@@ -1,15 +1,17 @@
-import React from 'react'
+import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import MockDate from 'mockdate';
 import { useMediaSet } from './';
 
 // advances both global time and the jest timers
+// (lodash debounce uses both timers and the actual
+// clock value for some reason 🤷🏼‍♂️)
 function advance(ms) {
   act(() => {
-    const now = Date.now()
-    MockDate.set(now + ms)
-    jest.advanceTimersByTime(ms)
-  })
+    const now = Date.now();
+    MockDate.set(now + ms);
+    jest.advanceTimersByTime(ms);
+  });
 }
 
 describe('useMediaSet', () => {
@@ -19,6 +21,8 @@ describe('useMediaSet', () => {
   const savedUseState = React.useState;
   let setStateCalls;
 
+  // Change the match value of the given media query, and
+  // trigger the corresponding event listener
   function change(query, newValue) {
     mediaMatches.get(query).matches = newValue;
     listeners.get(query)();
@@ -26,13 +30,17 @@ describe('useMediaSet', () => {
 
   beforeAll(() => {
     jest.useFakeTimers();
+
+    // JS-DOM doesn't know anything about matchMedia so we'll
+    // cobble up an implementation of it that's good enough
+    // to run these tests.
     Object.defineProperty(window, 'matchMedia', {
-      value: jest.fn().mockImplementation(function(query) {
+      value: jest.fn().mockImplementation(function (query) {
         const mm = {
           matches: initialTrueMatches.has(query),
           media: query,
           onchange: null,
-          addEventListener: function(_ev, handler) {
+          addEventListener: function (_ev, handler) {
             listeners.set(query, handler);
           },
           removeEventListener: jest.fn(),
@@ -48,14 +56,14 @@ describe('useMediaSet', () => {
   beforeEach(() => {
     // need to spy on how often a React state is getting set
     setStateCalls = 0;
-    React.useState = function(init) {
-      const [ val, setVal ] = savedUseState(init);
-      const mockedSetVal = function(newVal) {
+    React.useState = function (init) {
+      const [val, setVal] = savedUseState(init);
+      const mockedSetVal = function (newVal) {
         setStateCalls += 1;
         setVal(newVal);
-      }
-      return [ val, mockedSetVal ];
-    }
+      };
+      return [val, mockedSetVal];
+    };
   });
 
   afterEach(() => {
@@ -120,7 +128,8 @@ describe('useMediaSet', () => {
     const { unmount } = renderHook(() => useMediaSet());
     unmount();
     for (const m of mediaMatches.values()) {
-      expect(m.removeEventListener.mock.calls.length).toBe(1);
+      // expect(m.removeEventListener.mock.calls.length).toBe(1);
+      expect(m.removeEventListener).toHaveBeenCalledTimes(1);
     }
   });
 });
