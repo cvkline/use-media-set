@@ -51,7 +51,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
       }
 
       function cleanup() {
-        queryLists.forEach(v => v.removeEventListener('change', onChange));
+        queryLists.forEach(v => v.removeListener(onChange));
         debouncedSet.cancel();
       }
 
@@ -64,7 +64,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
         setMediaSet(matchingBreakpoints);
       }
 
-      queryLists.forEach(v => v.addEventListener('change', onChange));
+      queryLists.forEach(v => v.addListener(onChange));
 
       return cleanup;
     },

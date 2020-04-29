@@ -49,10 +49,14 @@ describe('useMediaSet', () => {
             matches: initialTrueMatches.has(query),
             media: query,
             onchange: null,
+            addListener: function (handler) {
+              listeners.set(query, handler);
+            },
             addEventListener: function (_ev, handler) {
               listeners.set(query, handler);
             },
             removeEventListener: jest.fn(),
+            removeListener: jest.fn(),
             dispatchEvent: Function.prototype,
           };
           mediaMatches.set(query, mm);
@@ -137,7 +141,7 @@ describe('useMediaSet', () => {
       const { unmount } = renderHook(() => useMediaSet());
       unmount();
       for (const m of mediaMatches.values()) {
-        expect(m.removeEventListener).toHaveBeenCalledTimes(1);
+        expect(m.removeListener).toHaveBeenCalledTimes(1);
       }
     });
   });
