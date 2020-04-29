@@ -2,7 +2,10 @@
   "name": "use-media-set",
   "version": "1.0.2",
   "description": "Custom hook to make components responsive to media query changes",
-  "author": "cvkline",
+  "author": {
+    "name": "Charley Kline",
+    "email": "cvkline"
+  },
   "license": "MIT",
   "repository": "cvkline/use-media-set",
   "main": "dist/index.js",
@@ -12,6 +15,14 @@
     "node": ">=8",
     "npm": ">=5"
   },
+  "keywords": [
+    "react",
+    "hook",
+    "hooks",
+    "responsive",
+    "media",
+    "queries"
+  ],
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
