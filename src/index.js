@@ -1,14 +1,15 @@
 import { useCallback, useState, useRef, useEffect } from 'react';
 import debounce from 'lodash/debounce';
+import { asMediaQuery } from './asMediaQuery';
 
 const DELAY = 50;
 
 // default media types based on window size:
 //   small <= 37em < medium <= 56em < large
 const DEFAULT_BREAKPOINTS = {
-  small: '(max-width: 592px)', // = 37em
-  medium: '(min-width: 593px) and (max-width: 896px)', // = 56em
-  large: '(min-width: 897px)',
+  small: { width: '..592' }, // = 37em
+  medium: { width: '593..896' }, // = 56em
+  large: { width: '897..' },
 };
 
 export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
@@ -25,7 +26,12 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
   function makeNewQueryLists() {
     queryLists.clear();
     Object.keys(breakpoints).forEach(function (k) {
-      queryLists.set(k, window.matchMedia(breakpoints[k]));
+      try {
+        const bkp = asMediaQuery(breakpoints[k]);
+        queryLists.set(k, window.matchMedia(bkp));
+      } catch (e) {
+        console.error(e.toString());
+      }
     });
   }
 

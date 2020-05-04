@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMediaSet } from 'use-media-set';
+import { bool } from 'prop-types';
 
 let renders = 0;
 
@@ -7,10 +8,10 @@ const divStyle = {
   width: '50%',
   margin: '20px',
   padding: '20px',
-  border: '2px solid blue'
+  border: '2px solid blue',
 };
 
-function Header({isSmall, isMedium, isLarge}) {
+function Header({ isSmall, isMedium, isLarge }) {
   renders += 1;
   return (
     <>
@@ -25,15 +26,25 @@ function Header({isSmall, isMedium, isLarge}) {
   );
 }
 
+Header.propTypes = {
+  isSmall: bool.isRequired,
+  isMedium: bool.isRequired,
+  isLarge: bool.isRequired,
+};
+
 function App() {
-  const [ bpoints, setBpoints ] = useState(undefined);
+  const [bpoints, setBpoints] = useState(undefined);
   const mediaStates = useMediaSet(bpoints);
 
   function newBreaks() {
     setBpoints({
-      small: '(max-width: 768px)',
-      medium: '(min-width: 640px) and (max-width: 960px)',
-      large: '(min-width: 800px)'
+      small: { width: '..768' },
+      medium: { width: '640..960' },
+      large: { width: '800..' },
+      bigScreen: [
+        { type: 'screen', color: true, deviceWidth: '1920..' },
+        { type: 'tv' },
+      ],
     });
   }
 
@@ -49,4 +60,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
