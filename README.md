@@ -73,7 +73,7 @@ An object will be interpreted as a set of media features, one per key in the obj
 
 An object query undergoes some validations, such as for recognized media feature names, invalid values for features, or incorrect data structures. If a validation fails, a `console.error` message is printed, and the query becomes `not all` which never match (the browser `window.matchMedia()` function does a similar substitution if it catches an error).
 
-To combine two media queries in an OR-like fashion so that either one will match, write them as two separate objects in an array.
+To combine two or more media queries in an OR-like fashion so that any one will match, write them as multiple separate objects in an array.
 
 ### Media types
 
