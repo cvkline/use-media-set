@@ -16,10 +16,27 @@ function advance(ms) {
 
 describe('useMediaSet', () => {
   describe('when mediaMatch is not available', () => {
-    it('just returns a constant empty set', () => {
+    it('just returns a constant empty set if no SSR defaults are given', () => {
       const { result } = renderHook(() => useMediaSet());
       expect(result.current instanceof Set).toBe(true);
       expect(result.current.size).toBe(0);
+    });
+
+    it('returns the SSR defaults if specified', () => {
+      const defaults = new Set(['tv']);
+      const { result } = renderHook(() =>
+        useMediaSet({ type: 'tv' }, defaults)
+      );
+      expect(result.current instanceof Set).toBe(true);
+      expect(result.current.size).toBe(1);
+      expect(result.current.has('tv')).toBe(true);
+    });
+
+    it('throws an error if the specified SSR default is not a Set', () => {
+      const { result } = renderHook(() =>
+        useMediaSet({ type: 'tv' }, ['1', '2', '3'])
+      );
+      expect(result.error?.message).toMatch(/ssrset .* must be of type set/i);
     });
   });
 

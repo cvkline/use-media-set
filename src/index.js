@@ -12,12 +12,19 @@ const DEFAULT_BREAKPOINTS = {
   large: { width: '897..' },
 };
 
-export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS) {
+export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS, ssrSet) {
   // If matchMedia is not present (as in some test environments),
-  // just return a constant empty set. This early return is technically
-  // a violation of the Rules of Hooks but since the early return will
-  // either always happen or never happen, the behavior is safe.
-  if (!window.matchMedia) return new Set();
+  // then either return a constant empty set, or if a set is specified
+  // as the second parameter, that is returned. That allows you to have
+  // a default set of matching breakpoints for a server-side render.
+  // This early return is technically a violation of the Rules of Hooks
+  // but since the early return will either always happen or never happen,
+  // the behavior is safe.
+  if (!window.matchMedia) {
+    if (typeof ssrSet === 'undefined') return new Set();
+    if (ssrSet instanceof Set) return ssrSet;
+    throw new Error('ssrSet (second argument) must be of type Set');
+  }
 
   const initialRender = useRef(true);
   const queryLists = new Map();

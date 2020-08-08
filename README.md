@@ -40,7 +40,7 @@ const Example = props => {
 ## API
 
 ```javascript
-const result = useMediaSet(queries);
+const result = useMediaSet(queries, [ssrDefaults]);
 ```
 
 * `queries` is an object where the keys are arbitrary names for a list of media query expressions. The media query expressions can either be strings (see [Using Media Queries](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries) from MDN), or an object notation (see "Media Query Object Syntax" below). If `queries` is not specified or `undefined`, a default set of width breakpoints will be used to implement `small`, `medium`, and `large` result values, which may or may not be useful to you:
@@ -53,7 +53,9 @@ const result = useMediaSet(queries);
         large: { width: '897..' },
       };
 
-* `result` is returned and will be a Javascript `Set` containing the keys (as strings) from `queries` for which the corresponding query matches. There can be zero, one, or multiple matching queries, so `Set` is an appropriate data type here. Testing 
+* `ssrDefaults` is an optional second argument that can be used to specify a default set of media query matches if the component is being rendered server-side (in which case `matchMedia` is not available). It is ignored in a real browser where `matchMedia` is implemented. It defaults to the empty set. If something other than a `Set` is passed for this argument, the hook will throw an error.
+
+* `result` is returned and will be a Javascript `Set` containing the keys (as strings) from `queries` for which the corresponding query matches. There can be zero, one, or multiple matching queries, so `Set` is an appropriate data type here.
 
 If the window is resized or the matching queries otherwise change, your component will automatically re-render and the new matching queries will be available in `result`. This allows you to write multiple renderings for your component for different media and it will automatically respond to changes in the matching queries.
 
@@ -103,7 +105,7 @@ Here is the entirety of a `queries` object to pass to `useMediaSet` with several
 
 * The device has a total width between 1280 and 3840 pixels
 * The device is a black and white screen (monochrome with a bit-depth of 1)
-* The window is shorter than 1000 pixels and the width is between 30 and 75 ems
+* The window is 1000 pixels high or shorter, and the width is between 30 and 75 ems
 * The device is either a color screen at least 1920 pixels wide, or a TV (_n.b._ not actually recommended as the `tv` media type is being deprecated)
 
 We could call `useMediaSet` with the following object as argument in order to implement all of the above queries at once.
@@ -118,16 +120,21 @@ We could call `useMediaSet` with the following object as argument in order to im
         ]
       }
 
+## Considerations for Server-Side Rendering (SSR)
+
+If you are making use of SSR to render an initial view of your application server-side and then hydrating it once the client JS loads, you will have to make a decision about which responsive view you want to render on the server, _i.e._, which set of media query matches you want to use. Once you have decided what to render by default in the SSR, you can work out the corresponding media match Set elements and specify those as the `ssrDefaults` parameter to the hook.
+
+There's no way for the server-side renderer to know what the particulars of the client display window are, so as a developer you will simply have to try to make your best guess of what the most common browser-side configuration will be. When the client JS initializes and hydrates the DOM itself, if the server side guess was correct then no additional re-renders will need to happen; if it was wrong then the component tree will re-render just as in any responsive action.
 
 ## Considerations for tests
 
-Some testing frameworks (most notably Jest with JSDOM) do not implement `matchMedia` on `window` so this hook cannot function. If `matchMedia` is not present, the hook's fallback behavior is just to return an empty Set, and it will never trigger a re-render.
+Some testing frameworks (most notably Jest with JSDOM) do not implement `matchMedia` on `window` so this hook cannot function. If `matchMedia` is not present, the hook's fallback behavior is just to return the `ssrDefaults` (or the empty Set if no `ssrDefaults` are specified) as if it were operating in SSR. In that case, the hook will never trigger a re-render.
 
-If your component tests will work without the responsive behavior, you can just use that fallback behavior. If you need to test different responsive codepaths, however, you have a couple of choices.
+If you need to test different responsive codepaths, however, you have a few choices:
 
-You can mock out the hook itself and use the mock to return the appropriate result Sets.
-
-Or you can mock an implementation for `window.matchMedia` so that the hook functions normally, and then control that mock to get your component to change behavior. For a start, see the test for this hook itself in `src/index.test.js`.
+* You can use the `ssrDefaults` parameter to force certain returned set elements for various responsive cases, and test those individually.
+* You can mock out the hook itself and use the mock to return the appropriate result Sets.
+* Or you can mock an implementation for `window.matchMedia` so that the hook functions normally, and then control that mock to get your component to change behavior. For a start, see the test for this hook itself in `src/index.test.js`.
 
 ## License
 
