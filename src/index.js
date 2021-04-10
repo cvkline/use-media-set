@@ -20,7 +20,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS, ssrSet) {
   // This early return is technically a violation of the Rules of Hooks
   // but since the early return will either always happen or never happen,
   // the behavior is safe.
-  if (!window.matchMedia) {
+  if (typeof window === "undefined" || !window.matchMedia) {
     if (typeof ssrSet === 'undefined') return new Set();
     if (ssrSet instanceof Set) return ssrSet;
     throw new Error('ssrSet (second argument) must be of type Set');
