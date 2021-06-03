@@ -1,6 +1,6 @@
 {
   "name": "use-media-set",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Custom hook to make components responsive to media query changes",
   "author": {
     "name": "Charley Kline",
