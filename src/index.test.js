@@ -1,16 +1,27 @@
-import React from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
-import MockDate from 'mockdate';
+import { renderHook, act } from '@testing-library/react';
 import { useMediaSet } from './';
 
-// advances both global time and the jest timers
-// (lodash debounce uses both timers and the actual
-// clock value for some reason 🤷🏼‍♂️)
+// Count how many times the debounced state setter actually fires, so we can
+// assert that rapid, near-simultaneous media changes are coalesced into a
+// single state update. We wrap the function lodash debounces (the state
+// setter) while preserving the real debounce behavior.
+const spy = vi.hoisted(() => ({ debouncedCalls: 0 }));
+vi.mock('lodash/debounce', async importOriginal => {
+  const debounce = (await importOriginal()).default;
+  return {
+    default: (fn, ...rest) =>
+      debounce((...args) => {
+        spy.debouncedCalls += 1;
+        return fn(...args);
+      }, ...rest),
+  };
+});
+
+// advances the fake timers; Vitest's fake timers also mock Date,
+// which lodash debounce relies on to decide when to fire.
 function advance(ms) {
   act(() => {
-    const now = Date.now();
-    MockDate.set(now + ms);
-    jest.advanceTimersByTime(ms);
+    vi.advanceTimersByTime(ms);
   });
 }
 
@@ -33,10 +44,9 @@ describe('useMediaSet', () => {
     });
 
     it('throws an error if the specified SSR default is not a Set', () => {
-      const { result } = renderHook(() =>
-        useMediaSet({ type: 'tv' }, ['1', '2', '3'])
-      );
-      expect(result.error?.message).toMatch(/ssrset .* must be of type set/i);
+      expect(() =>
+        renderHook(() => useMediaSet({ type: 'tv' }, ['1', '2', '3']))
+      ).toThrow(/ssrset .* must be of type set/i);
     });
   });
 
@@ -44,8 +54,6 @@ describe('useMediaSet', () => {
     const mediaMatches = new Map();
     const listeners = new Map();
     const initialTrueMatches = new Set();
-    const savedUseState = React.useState;
-    let setStateCalls;
 
     // Change the match value of the given media query, and
     // trigger the corresponding event listener
@@ -55,13 +63,13 @@ describe('useMediaSet', () => {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       // JS-DOM doesn't know anything about matchMedia so we'll
       // cobble up an implementation of it that's good enough
       // to run these tests.
       Object.defineProperty(window, 'matchMedia', {
-        value: jest.fn().mockImplementation(function (query) {
+        value: vi.fn().mockImplementation(function (query) {
           const mm = {
             matches: initialTrueMatches.has(query),
             media: query,
@@ -72,8 +80,8 @@ describe('useMediaSet', () => {
             addEventListener: function (_ev, handler) {
               listeners.set(query, handler);
             },
-            removeEventListener: jest.fn(),
-            removeListener: jest.fn(),
+            removeEventListener: vi.fn(),
+            removeListener: vi.fn(),
             dispatchEvent: Function.prototype,
           };
           mediaMatches.set(query, mm);
@@ -84,23 +92,13 @@ describe('useMediaSet', () => {
     });
 
     beforeEach(() => {
-      // need to spy on how often a React state is getting set
-      setStateCalls = 0;
-      React.useState = function (init) {
-        const [val, setVal] = savedUseState(init);
-        const mockedSetVal = function (newVal) {
-          setStateCalls += 1;
-          setVal(newVal);
-        };
-        return [val, mockedSetVal];
-      };
+      spy.debouncedCalls = 0;
     });
 
     afterEach(() => {
       listeners.clear();
       mediaMatches.clear();
       initialTrueMatches.clear();
-      React.useState = savedUseState;
     });
 
     it('returns the correct initial state with the default queries', () => {
@@ -151,7 +149,7 @@ describe('useMediaSet', () => {
       rerender();
       expect(result.current.size).toBe(1);
       expect(result.current.has('three')).toBe(true);
-      expect(setStateCalls).toBe(1);
+      expect(spy.debouncedCalls).toBe(1);
     });
 
     it('unregisters all the listeners on unmount', () => {
