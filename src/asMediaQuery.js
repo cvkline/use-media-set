@@ -1,8 +1,4 @@
-import flatMap from 'lodash/flatMap';
-import isArray from 'lodash/isArray';
-import isNumber from 'lodash/isNumber';
 import isPlainObject from 'lodash/isPlainObject';
-import isString from 'lodash/isString';
 import kebabCase from 'lodash/kebabCase';
 
 // Lodash's _.capitalize() won't do here, because it not only
@@ -54,7 +50,7 @@ const matchNumber = /^\d+$/;
 
 // all the min- and max- versions of the rangeable features
 const rangeFeatures = Object.freeze(
-  flatMap(rangeableFeatures, feat =>
+  rangeableFeatures.flatMap(feat =>
     ['min', 'max'].map(r => r + capitalize(feat)),
   ),
 );
@@ -69,8 +65,8 @@ export class MediaQueryError extends Error {
 // if given a range, either an array or string, return a two-element
 // array of the min and max values of the range. if not a range, return null.
 function getRange(x) {
-  if (isArray(x) && x.length === 2) return x;
-  if (isString(x)) {
+  if (Array.isArray(x) && x.length === 2) return x;
+  if (typeof x === 'string') {
     const m = x.match(matchRange);
     if (m) return [m[1], m[2]];
   }
@@ -82,12 +78,12 @@ function feature(k, v) {
 
   if (v === true) return '(' + cssKey + ')';
 
-  if (isString(v)) {
+  if (typeof v === 'string') {
     const px = hasLengthUnits.includes(k) && v.match(matchNumber) ? 'px' : '';
     return `(${cssKey}: ${v}${px})`;
   }
 
-  if (isNumber(v)) {
+  if (typeof v === 'number') {
     const px = hasLengthUnits.includes(k) ? 'px' : '';
     return `(${cssKey}: ${v}${px})`;
   }
@@ -96,7 +92,7 @@ function feature(k, v) {
 }
 
 function convertObj(obj) {
-  if (isString(obj)) return obj;
+  if (typeof obj === 'string') return obj;
   if (!isPlainObject(obj))
     throw new MediaQueryError('argument is not an object or string');
 
@@ -153,6 +149,6 @@ function convertObj(obj) {
 }
 
 export function asMediaQuery(query) {
-  const queries = isArray(query) ? query : [query];
+  const queries = Array.isArray(query) ? query : [query];
   return queries.map(q => convertObj(q)).join(', ');
 }
