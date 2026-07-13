@@ -1,6 +1,6 @@
-import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { asMediaQuery } from './asMediaQuery';
+import debounce from './debounce';
 
 const DELAY = 50;
 

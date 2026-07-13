@@ -12,7 +12,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // Don't bundle peer deps or declared dependencies; let consumers dedupe them.
-      external: ['react', 'react-dom', /^lodash/],
+      external: ['react', 'react-dom'],
     },
   },
   test: {

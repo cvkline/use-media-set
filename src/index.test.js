@@ -3,10 +3,10 @@ import { useMediaSet } from './';
 
 // Count how many times the debounced state setter actually fires, so we can
 // assert that rapid, near-simultaneous media changes are coalesced into a
-// single state update. We wrap the function lodash debounces (the state
+// single state update. We wrap the function our debounce receives (the state
 // setter) while preserving the real debounce behavior.
 const spy = vi.hoisted(() => ({ debouncedCalls: 0 }));
-vi.mock('lodash/debounce', async importOriginal => {
+vi.mock('./debounce', async importOriginal => {
   const debounce = (await importOriginal()).default;
   return {
     default: (fn, ...rest) =>
@@ -20,8 +20,7 @@ vi.mock('lodash/debounce', async importOriginal => {
   };
 });
 
-// advances the fake timers; Vitest's fake timers also mock Date,
-// which lodash debounce relies on to decide when to fire.
+// advances the fake timers so a pending debounced update fires.
 function advance(ms) {
   act(() => {
     vi.advanceTimersByTime(ms);

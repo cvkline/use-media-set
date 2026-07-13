@@ -44,9 +44,6 @@
     "deploy": "gh-pages -d example/dist",
     "postpublish": "git push --tags"
   },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
   "peerDependencies": {
     "react": "^18 || ^19"
   },
