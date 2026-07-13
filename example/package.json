@@ -4,23 +4,19 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "dependencies": {
     "prop-types": "^15.6.2",
-    "react": "file:../node_modules/react",
-    "react-dom": "^16.9.0",
-    "react-scripts": "^3.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "use-media-set": "file:.."
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^7.0.0"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  }
 }

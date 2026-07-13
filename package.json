@@ -4,7 +4,7 @@
   "description": "Custom hook to make components responsive to media query changes",
   "author": {
     "name": "Charley Kline",
-    "email": "cvkline"
+    "email": "cvkline@gmail.com"
   },
   "license": "MIT",
   "repository": "cvkline/use-media-set",
@@ -39,7 +39,7 @@
     "start": "vite build --watch",
     "prepare": "npm run build",
     "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build",
+    "deploy": "gh-pages -d example/dist",
     "postpublish": "git push --tags"
   },
   "dependencies": {
