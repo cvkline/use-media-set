@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useMediaSet } from './';
 
 // Count how many times the debounced state setter actually fires, so we can
@@ -10,10 +10,13 @@ vi.mock('lodash/debounce', async importOriginal => {
   const debounce = (await importOriginal()).default;
   return {
     default: (fn, ...rest) =>
-      debounce((...args) => {
-        spy.debouncedCalls += 1;
-        return fn(...args);
-      }, ...rest),
+      debounce(
+        (...args) => {
+          spy.debouncedCalls += 1;
+          return fn(...args);
+        },
+        ...rest,
+      ),
   };
 });
 
@@ -36,7 +39,7 @@ describe('useMediaSet', () => {
     it('returns the SSR defaults if specified', () => {
       const defaults = new Set(['tv']);
       const { result } = renderHook(() =>
-        useMediaSet({ type: 'tv' }, defaults)
+        useMediaSet({ type: 'tv' }, defaults),
       );
       expect(result.current instanceof Set).toBe(true);
       expect(result.current.size).toBe(1);
@@ -45,7 +48,7 @@ describe('useMediaSet', () => {
 
     it('throws an error if the specified SSR default is not a Set', () => {
       expect(() =>
-        renderHook(() => useMediaSet({ type: 'tv' }, ['1', '2', '3']))
+        renderHook(() => useMediaSet({ type: 'tv' }, ['1', '2', '3'])),
       ).toThrow(/ssrset .* must be of type set/i);
     });
   });
@@ -69,15 +72,15 @@ describe('useMediaSet', () => {
       // cobble up an implementation of it that's good enough
       // to run these tests.
       Object.defineProperty(window, 'matchMedia', {
-        value: vi.fn().mockImplementation(function (query) {
+        value: vi.fn().mockImplementation(query => {
           const mm = {
             matches: initialTrueMatches.has(query),
             media: query,
             onchange: null,
-            addListener: function (handler) {
+            addListener: handler => {
               listeners.set(query, handler);
             },
-            addEventListener: function (_ev, handler) {
+            addEventListener: (_ev, handler) => {
               listeners.set(query, handler);
             },
             removeEventListener: vi.fn(),

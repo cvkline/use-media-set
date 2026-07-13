@@ -1,5 +1,5 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
 import debounce from 'lodash/debounce';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { asMediaQuery } from './asMediaQuery';
 
 const DELAY = 50;
@@ -20,7 +20,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS, ssrSet) {
   // This early return is technically a violation of the Rules of Hooks
   // but since the early return will either always happen or never happen,
   // the behavior is safe.
-  if (typeof window === "undefined" || !window.matchMedia) {
+  if (typeof window === 'undefined' || !window.matchMedia) {
     if (typeof ssrSet === 'undefined') return new Set();
     if (ssrSet instanceof Set) return ssrSet;
     throw new Error('ssrSet (second argument) must be of type Set');
@@ -32,7 +32,7 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS, ssrSet) {
   // for each named breakpoint, create a media query for it
   function makeNewQueryLists() {
     queryLists.clear();
-    Object.keys(breakpoints).forEach(function (k) {
+    Object.keys(breakpoints).forEach(k => {
       try {
         const bkp = asMediaQuery(breakpoints[k]);
         queryLists.set(k, window.matchMedia(bkp));
@@ -57,32 +57,33 @@ export function useMediaSet(breakpoints = DEFAULT_BREAKPOINTS, ssrSet) {
   const [mediaSet, setMediaSet] = useState(matchingBreakpoints);
   const debouncedSet = useCallback(debounce(setMediaSet, DELAY), []);
 
-  useEffect(
-    function () {
-      function onChange() {
-        debouncedSet(matchingBreakpoints);
-      }
+  useEffect(() => {
+    function onChange() {
+      debouncedSet(matchingBreakpoints);
+    }
 
-      function cleanup() {
-        queryLists.forEach(v => v.removeListener(onChange));
-        debouncedSet.cancel();
-      }
+    function cleanup() {
+      queryLists.forEach(v => {
+        v.removeListener(onChange);
+      });
+      debouncedSet.cancel();
+    }
 
-      // don't make new query lists on the initial render because it just
-      // got done up above
-      if (initialRender.current) {
-        initialRender.current = false;
-      } else {
-        makeNewQueryLists();
-        setMediaSet(matchingBreakpoints);
-      }
+    // don't make new query lists on the initial render because it just
+    // got done up above
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      makeNewQueryLists();
+      setMediaSet(matchingBreakpoints);
+    }
 
-      queryLists.forEach(v => v.addListener(onChange));
+    queryLists.forEach(v => {
+      v.addListener(onChange);
+    });
 
-      return cleanup;
-    },
-    [JSON.stringify(breakpoints)]
-  );
+    return cleanup;
+  }, [JSON.stringify(breakpoints)]);
 
   return mediaSet;
 }

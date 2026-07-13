@@ -1,9 +1,9 @@
-import kebabCase from 'lodash/kebabCase';
 import flatMap from 'lodash/flatMap';
-import isString from 'lodash/isString';
-import isNumber from 'lodash/isNumber';
 import isArray from 'lodash/isArray';
+import isNumber from 'lodash/isNumber';
 import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
+import kebabCase from 'lodash/kebabCase';
 
 // Lodash's _.capitalize() won't do here, because it not only
 // capitalizes the string but lowercases the rest of it, which
@@ -40,7 +40,7 @@ const rangeableFeatures = Object.freeze([
 // features where units are length, so we want to append a default
 // unit of "px" if only numbers are provided
 const hasLengthUnits = ['width', 'height', 'deviceWidth', 'deviceHeight'];
-hasLengthUnits.forEach(function (v) {
+hasLengthUnits.forEach(v => {
   const cv = capitalize(v);
   hasLengthUnits.push('min' + cv);
   hasLengthUnits.push('max' + cv);
@@ -48,15 +48,15 @@ hasLengthUnits.forEach(function (v) {
 Object.freeze(hasLengthUnits);
 
 // handy pattern matches
-const matchType = new RegExp('^(not|only)\\s+(\\w+)$');
-const matchRange = new RegExp('^\\s*(\\w*?)\\s*\\.\\.\\s*(\\w*?)\\s*$');
-const matchNumber = new RegExp('^\\d+$');
+const matchType = /^(not|only)\s+(\w+)$/;
+const matchRange = /^\s*(\w*?)\s*\.\.\s*(\w*?)\s*$/;
+const matchNumber = /^\d+$/;
 
 // all the min- and max- versions of the rangeable features
 const rangeFeatures = Object.freeze(
   flatMap(rangeableFeatures, feat =>
-    ['min', 'max'].map(r => r + capitalize(feat))
-  )
+    ['min', 'max'].map(r => r + capitalize(feat)),
+  ),
 );
 
 export class MediaQueryError extends Error {
@@ -101,7 +101,7 @@ function convertObj(obj) {
     throw new MediaQueryError('argument is not an object or string');
 
   const keys = new Set(Object.keys(obj));
-  let query = [];
+  const query = [];
 
   // First see if any media type is present
   if (keys.has('type')) {

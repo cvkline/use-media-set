@@ -35,6 +35,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format --write .",
     "build": "vite build",
     "start": "vite build --watch",
     "prepare": "npm run build",
@@ -43,28 +45,17 @@
     "postpublish": "git push --tags"
   },
   "dependencies": {
-    "lodash": "^4.10"
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "react": "^18 || ^19"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "5.16.0",
-    "eslint-config-prettier": "^6",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-config-standard-react": "^6.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-prettier": "^3",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-react": "^7.10.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "gh-pages": "^5.0.0",
+    "gh-pages": "^6.0.0",
     "jsdom": "^25.0.1",
-    "prettier": "^2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "vite": "^7.0.0",

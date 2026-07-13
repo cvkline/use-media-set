@@ -2,18 +2,20 @@
 
 > Custom hook to make components responsive to media query changes
 
-[![NPM](https://img.shields.io/npm/v/use-media-set.svg)](https://www.npmjs.com/package/use-media-set) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/use-media-set.svg)](https://www.npmjs.com/package/use-media-set) [![CI](https://github.com/cvkline/use-media-set/actions/workflows/ci.yml/badge.svg)](https://github.com/cvkline/use-media-set/actions/workflows/ci.yml) [![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?logo=biome)](https://biomejs.dev)
 
 ## Install
 
 ```bash
-npm install --save use-media-set
+npm install use-media-set
 ```
+
+> **Requires React 18 or 19** (declared as a peer dependency). If you need to
+> support React 16 or 17, use `use-media-set@1.x`.
 
 ## Example Usage
 
 ```jsx
-import React from 'react';
 import DesktopVersion from './DesktopVersion';
 import MobileVersion from './MobileVersion';
 import { useMediaSet } from 'use-media-set';
@@ -128,7 +130,7 @@ There's no way for the server-side renderer to know what the particulars of the 
 
 ## Considerations for tests
 
-Some testing frameworks (most notably Jest with JSDOM) do not implement `matchMedia` on `window` so this hook cannot function. If `matchMedia` is not present, the hook's fallback behavior is just to return the `ssrDefaults` (or the empty Set if no `ssrDefaults` are specified) as if it were operating in SSR. In that case, the hook will never trigger a re-render.
+Some testing environments (for example Jest or Vitest running under jsdom) do not implement `matchMedia` on `window` so this hook cannot function. If `matchMedia` is not present, the hook's fallback behavior is just to return the `ssrDefaults` (or the empty Set if no `ssrDefaults` are specified) as if it were operating in SSR. In that case, the hook will never trigger a re-render.
 
 If you need to test different responsive codepaths, however, you have a few choices:
 
@@ -142,4 +144,4 @@ MIT © [Charley Kline](https://github.com/cvkline)
 
 ---
 
-This hook was created using [create-react-hook](https://github.com/hermanya/create-react-hook).
+This hook was originally scaffolded with [create-react-hook](https://github.com/hermanya/create-react-hook); it now builds and tests with [Vite](https://vite.dev) and [Vitest](https://vitest.dev).

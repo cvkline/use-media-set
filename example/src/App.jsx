@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useMediaSet } from 'use-media-set';
 import { bool } from 'prop-types';
+import { useState } from 'react';
+import { useMediaSet } from 'use-media-set';
 
 let renders = 0;
 
@@ -55,7 +55,9 @@ function App() {
         isMedium={mediaStates.has('medium')}
         isLarge={mediaStates.has('large')}
       />
-      <button onClick={newBreaks}>Install new breakpoints</button>
+      <button type="button" onClick={newBreaks}>
+        Install new breakpoints
+      </button>
     </div>
   );
 }
