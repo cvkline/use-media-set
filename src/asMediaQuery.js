@@ -1,10 +1,19 @@
-import isPlainObject from 'lodash/isPlainObject';
-import kebabCase from 'lodash/kebabCase';
-
-// Lodash's _.capitalize() won't do here, because it not only
-// capitalizes the string but lowercases the rest of it, which
-// we do not want here. This will work well enough.
+// A plain capitalize() won't do here: we only want to upper-case the first
+// letter without lower-casing the rest. This will work well enough.
 const capitalize = s => s[0].toUpperCase() + s.slice(1);
+
+// Convert a camelCase media feature name to its kebab-case CSS form,
+// e.g. 'deviceAspectRatio' -> 'device-aspect-ratio'. Feature names are
+// always simple camelCase, so a boundary regex is sufficient.
+const kebabCase = s => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+// True only for plain objects — created via an object literal or
+// Object.create(null) — and not for arrays, null, or class instances.
+const isPlainObject = v => {
+  if (v === null || typeof v !== 'object') return false;
+  const proto = Object.getPrototypeOf(v);
+  return proto === Object.prototype || proto === null;
+};
 
 const mediaTypes = Object.freeze([
   'all',

@@ -1,4 +1,3 @@
-import kebabCase from 'lodash/kebabCase';
 import { MediaQueryError, asMediaQuery as subject } from './asMediaQuery';
 
 describe('asMediaQuery', () => {
@@ -35,10 +34,16 @@ describe('asMediaQuery', () => {
     });
 
     it('adds default px to length-style features', () => {
-      ['width', 'height', 'deviceWidth', 'deviceHeight'].forEach(n => {
-        const result = subject({ [n]: 100 });
-        expect(result).toBe(`(${kebabCase(n)}: 100px)`);
-      });
+      const cases = {
+        width: 'width',
+        height: 'height',
+        deviceWidth: 'device-width',
+        deviceHeight: 'device-height',
+      };
+      for (const [feature, css] of Object.entries(cases)) {
+        const result = subject({ [feature]: 100 });
+        expect(result).toBe(`(${css}: 100px)`);
+      }
     });
 
     it('does not add px to non-length-style features', () => {
