@@ -1,5 +1,5 @@
-import { asMediaQuery as subject, MediaQueryError } from './asMediaQuery';
 import kebabCase from 'lodash/kebabCase';
+import { MediaQueryError, asMediaQuery as subject } from './asMediaQuery';
 
 describe('asMediaQuery', () => {
   describe('strings', () => {
@@ -28,9 +28,11 @@ describe('asMediaQuery', () => {
     });
 
     it('throws when trying to use a min- or max- on a non-rangeable feature', () => {
-      expect(() => subject({ minOrientation: 'landscape' })).toThrow(MediaQueryError);
-      expect(() => subject({ maxScan: 'whatever'})).toThrow(MediaQueryError);
-    })
+      expect(() => subject({ minOrientation: 'landscape' })).toThrow(
+        MediaQueryError,
+      );
+      expect(() => subject({ maxScan: 'whatever' })).toThrow(MediaQueryError);
+    });
 
     it('adds default px to length-style features', () => {
       ['width', 'height', 'deviceWidth', 'deviceHeight'].forEach(n => {
@@ -73,13 +75,15 @@ describe('asMediaQuery', () => {
     });
 
     it('throws on an unknown feature name', () => {
-      expect(() => subject({ resolution: '72dpi', nonsense: 255 })).toThrow(MediaQueryError);
+      expect(() => subject({ resolution: '72dpi', nonsense: 255 })).toThrow(
+        MediaQueryError,
+      );
     });
   });
 
   describe('ranges', () => {
     it('throws when given a range for a non-rangeable feature', () => {
-      expect(() => subject({ orientation: [1, 2]})).toThrow(MediaQueryError);
+      expect(() => subject({ orientation: [1, 2] })).toThrow(MediaQueryError);
     });
 
     it('converts a string range into two features, min and max', () => {
@@ -123,7 +127,9 @@ describe('asMediaQuery', () => {
         { type: 'screen', color: true, deviceWidth: '1920..' },
         { type: 'tv' },
       ]);
-      expect(result).toBe('screen and (color) and (min-device-width: 1920px), tv');
+      expect(result).toBe(
+        'screen and (color) and (min-device-width: 1920px), tv',
+      );
     });
 
     it('allows string and object forms to be mixed', () => {
@@ -131,7 +137,9 @@ describe('asMediaQuery', () => {
         'print and (monochrome: 8)',
         { type: 'print', color: '..16' },
       ]);
-      expect(result).toBe('print and (monochrome: 8), print and (max-color: 16)');
+      expect(result).toBe(
+        'print and (monochrome: 8), print and (max-color: 16)',
+      );
     });
   });
 });
